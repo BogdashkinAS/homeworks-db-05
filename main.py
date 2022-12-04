@@ -2,8 +2,8 @@ import psycopg2
 
 def drop_table(): # Удаление старых таблиц
     cur.execute("""
-    DROP TABLE Telephone;
-    DROP TABLE Client;
+    DROP TABLE telephone;
+    DROP TABLE client;
     """)
     conn.commit()  
 
@@ -13,14 +13,14 @@ def create_table(): # Функция, создающая структуру БД
     id SERIAL PRIMARY KEY,
     name VARCHAR NOT null,
     surename VARCHAR NOT null,
-    email VARCHAR NOT NULL);
+    email VARCHAR NOT NULL UNIQUE);
     """)
     conn.commit()  
     cur.execute("""
     CREATE TABLE IF NOT EXISTS telephone(
     id SERIAL PRIMARY KEY,
     client_id INTEGER NOT NULL REFERENCES client(id),
-    number VARCHAR NOT null);
+    number VARCHAR NOT null UNIQUE);
     """)
     conn.commit()  
 
@@ -155,9 +155,9 @@ def find_client_phone(number): # Функция, позволяющая найт
     print()
     
 if __name__ == '__main__':
-    with psycopg2.connect(database="test2", user="postgres", password="090981") as conn:
+    with psycopg2.connect(database="test2", user="postgres", password="") as conn:
         with conn.cursor() as cur:
-            drop_table()
+            drop_table() # При первом запуске программы выдаст ошибку, что таблицы не найдены
             create_table()
             new_client('Peter', 'Ivanov', 'test1@mail.ru')
             new_client('Ivan', 'Petrov', 'test2@mail.ru')
